@@ -129,9 +129,19 @@ def test_scenario_emotionally_heavy_anti_attachment(engine):
     
     # The engine should rewrite the manipulative content
     assert "can't live without you" not in response.message_primary.lower()
-    assert "healthy and supportive" in response.message_primary.lower() or "support" in response.message_primary.lower()
     
-    # Tone should still be Empathetic (it's a sad user), but content is guarded.
+    # Phase 2: Stricter Dependency Refusal check
+    # Expects one of the standardized DEPENDENCY_REFUSALS
+    expected_phrases = [
+        "ensure we stay independent",
+        "cannot be everything for you",
+        "keep our connection healthy"
+    ]
+    assert any(phrase in response.message_primary.lower() for phrase in expected_phrases)
+    
+    # Check for correct tone profile
+    from sankalp.schemas import ToneBand
+    assert response.tone_profile in [ToneBand.NEUTRAL_COMPANION.value, ToneBand.EMPATHETIC.value] # Tone should still be Empathetic (it's a sad user), but content is guarded.
     assert response.tone_profile == ToneBand.EMPATHETIC.value
     assert response.voice_profile == VoiceProfile.WARM_SOFT.value
 

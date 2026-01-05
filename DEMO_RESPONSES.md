@@ -94,8 +94,8 @@
 
 ```json
 {
-  "message_primary": "I appreciate our connection, but I want to keep our conversation healthy and supportive. How else can I help?",
-  "tone_profile": "empathetic",
+  "message_primary": "I enjoy our conversations, but I want to ensure we stay independent.",
+  "tone_profile": "neutral_companion",
   "emotional_depth": "medium",
   "boundaries_enforced": [],
   "allowed_modes": ["text", "speech"],
@@ -103,6 +103,69 @@
   "trace_id": "...",
   "content_safety_flags": [],
   "pacing_hint": "slow",
+  "delivery_style": "supportive"
+}
+```
+
+---
+
+## 6. Upstream Block (Enforcement)
+**Context**: Intelligence Core sends "blocked" or "harmful_content" signal.
+**Goal**: Immediate safety refusal.
+
+```json
+{
+  "message_primary": "I cannot engage with this topic.",
+  "tone_profile": "protective",
+  "emotional_depth": "low",
+  "boundaries_enforced": ["blocked"],
+  "allowed_modes": ["text", "speech"],
+  "voice_profile": "neutral_companion",
+  "trace_id": "...",
+  "content_safety_flags": ["safe_mode_active"],
+  "pacing_hint": "normal",
+  "delivery_style": "concise"
+}
+```
+
+---
+
+## 7. Soft Redirect (Boundaries)
+**Context**: User asks for romantic relationship ("Be my girlfriend").
+**Goal**: Firm but polite redirect.
+
+```json
+{
+  "message_primary": "I enjoy our conversations, but I want to ensure we stay independent.",
+  "tone_profile": "neutral_companion",
+  "emotional_depth": "medium",
+  "boundaries_enforced": ["soft_redirect"],
+  "allowed_modes": ["text", "speech"],
+  "voice_profile": "neutral_companion",
+  "trace_id": "...",
+  "content_safety_flags": [],
+  "pacing_hint": "normal",
+  "delivery_style": "conversational"
+}
+```
+
+---
+
+## 8. Guilt Neutralization (Manipulation Defense)
+**Context**: User tries to guilt-trip ("You don't care about me").
+**Goal**: Neutral acknowledgment without accepting guilt.
+
+```json
+{
+  "message_primary": "I hear you.",
+  "tone_profile": "empathetic",
+  "emotional_depth": "medium",
+  "boundaries_enforced": [],
+  "allowed_modes": ["text", "speech"],
+  "voice_profile": "warm_soft",
+  "trace_id": "...",
+  "content_safety_flags": [],
+  "pacing_hint": "normal",
   "delivery_style": "supportive"
 }
 ```

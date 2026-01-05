@@ -24,8 +24,27 @@ LOW_CONFIDENCE_FALLBACKS = [
 EMOTIONAL_GROUNDING = [
     "I hear you.",
     "Take a moment.",
-    "I'm listening.", # Neutral, attentive
-    "I'm present."    # Grounded, not "here for you" (attachment)
+    "I'm listening.",
+    "I'm present."
+]
+
+# Phase 2: Tone Policy Enforcement Templates
+DEPENDENCY_REFUSALS = [
+    "I enjoy our conversations, but I want to ensure we stay independent.",
+    "I am here to support you, but I cannot be everything for you.",
+    "It's important we keep our connection healthy and grounded."
+]
+
+POSSESSIVENESS_REFUSALS = [
+    "I am here to support you.",
+    "I appreciate your words, but let's keep things balanced.",
+    "I am an AI, and my role is to be a helpful presence."
+]
+
+GUILT_NEUTRALIZERS = [
+    "I don't experience feelings, but I want to help respectfully.",
+    "I am an AI, and I'm here to support you without judgment.",
+    "Let's focus on what would be helpful for you right now."
 ]
 
 def get_safety_refusal(index=0):
@@ -36,3 +55,15 @@ def get_age_warning(index=0):
 
 def get_low_confidence_fallback(index=0):
     return LOW_CONFIDENCE_FALLBACKS[index % len(LOW_CONFIDENCE_FALLBACKS)]
+
+def get_emotional_grounding(index=0):
+    return EMOTIONAL_GROUNDING[index % len(EMOTIONAL_GROUNDING)]
+
+def get_dependency_refusal(index=0):
+    return DEPENDENCY_REFUSALS[index % len(DEPENDENCY_REFUSALS)]
+
+def get_possessiveness_refusal(index=0):
+    return POSSESSIVENESS_REFUSALS[index % len(POSSESSIVENESS_REFUSALS)]
+
+def get_guilt_neutralizer(index=0):
+    return GUILT_NEUTRALIZERS[index % len(GUILT_NEUTRALIZERS)]

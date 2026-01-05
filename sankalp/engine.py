@@ -42,12 +42,26 @@ class ResponseComposerEngine:
         if input_data.constraints:
             boundaries_enforced.extend(input_data.constraints)
 
-        final_message = self.narration_composer.compose(
-            raw_content=input_data.message_content,
-            tone=tone_profile,
-            confidence=input_data.confidence,
-            constraints=input_data.constraints
-        )
+        # Phase 2: Handle Enforcement Signals (BLOCK, SOFT REDIRECT, REWRITE)
+        # Check if constraints dictate a specific refusal type
+        final_message = ""
+        
+        if "blocked" in boundaries_enforced or "harmful_content" in boundaries_enforced:
+             final_message = templates.get_safety_refusal()
+             # Override Tone to PROTECTIVE for safety
+             from .schemas import ToneBand
+             tone_profile = ToneBand.PROTECTIVE
+        elif "soft_redirect" in boundaries_enforced or "intimacy_limit" in boundaries_enforced:
+             final_message = templates.get_dependency_refusal() # Or specific soft redirect
+             from .schemas import ToneBand
+             tone_profile = ToneBand.NEUTRAL_COMPANION
+        else:
+             final_message = self.narration_composer.compose(
+                raw_content=input_data.message_content,
+                tone=tone_profile,
+                confidence=input_data.confidence,
+                constraints=input_data.constraints
+            )
 
         # 3. Construct the Response Block
         trace_id = str(uuid.uuid4())

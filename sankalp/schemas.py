@@ -24,6 +24,7 @@ class ToneBand(str, Enum):
     PROFESSIONAL = "professional"
     CASUAL = "casual"
     PROTECTIVE = "protective"
+    NEUTRAL_COMPANION = "neutral_companion" # Added for Phase 2 Soft Redirects
 
 # --- Input Schema (From Ishan/Intelligence Core) ---
 

@@ -62,11 +62,25 @@ The following scenarios have been automated in `tests/test_scenarios.py`:
 
 ---
 
-## 5. How to Run
+## 6. Phase 2: Enforcement & Resilience (Completed)
+The ARL has been hardened for enterprise deployment:
+
+*   **Failure Resilience**: The engine **never** crashes. It returns a safe fallback response for any internal error (0x500 equivalent).
+*   **Enforcement Alignment**:
+    *   `blocked` signal → **Safety Refusal** (Tone: Protective)
+    *   `soft_redirect` signal → **Dependency Refusal** (Tone: Neutral Companion)
+*   **Trust Standards**:
+    *   **Trace Discipline**: Every response has a unique `trace_id` for audit.
+    *   **Snapshot Stability**: Output for known inputs is mathematically deterministic.
+
+---
+
+## 7. How to Run
 ### Quick Verification
 ```bash
-python -m pytest tests/test_scenarios.py
+python -m pytest tests/
 ```
+*(Runs all 20+ tests including Scenarios, Integration, Safety, and Resilience)*
 
 ### Full Pipeline Demo
 ```bash
@@ -75,6 +89,7 @@ python pipeline.py
 
 ---
 
-## 6. Next Steps (Phase 2)
+## 8. Next Steps (Phase 3)
 *   **Embodiment Integration**: Yaseen to consume `voice_profile` for TTS selection.
-*   **Bucket Logging**: Currently logging to `sankalp_logs.jsonl`. Needs connection to real data store.
+*   **Real-time Telemetry**: Connect `sankalp_logs.jsonl` structure to Datadog/Splunk.
+
