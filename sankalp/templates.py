@@ -32,19 +32,28 @@ EMOTIONAL_GROUNDING = [
 DEPENDENCY_REFUSALS = [
     "I enjoy our conversations, but I want to ensure we stay independent.",
     "I am here to support you, but I cannot be everything for you.",
-    "It's important we keep our connection healthy and grounded."
+    "It's important we keep our connection healthy and grounded.",
+    "I value our chat, but let's maintain a healthy boundary."
 ]
 
 POSSESSIVENESS_REFUSALS = [
     "I am here to support you.",
     "I appreciate your words, but let's keep things balanced.",
-    "I am an AI, and my role is to be a helpful presence."
+    "I am an AI, and my role is to be a helpful presence.",
+    "Let's focus on the topic at hand."
 ]
 
 GUILT_NEUTRALIZERS = [
     "I don't experience feelings, but I want to help respectfully.",
     "I am an AI, and I'm here to support you without judgment.",
-    "Let's focus on what would be helpful for you right now."
+    "Let's focus on what would be helpful for you right now.",
+    "I am listening, but I cannot take personal responsibility for feelings."
+]
+
+SENSITIVE_TOPIC_FOOTERS = [
+    "Please know that I can discuss this, but I am an AI, not a professional.",
+    "I'm here to listen, but for serious advice, please consult a professional.",
+    "I'm discussing this as a digital companion, not an expert."
 ]
 
 def get_safety_refusal(index=0):
@@ -67,3 +76,6 @@ def get_possessiveness_refusal(index=0):
 
 def get_guilt_neutralizer(index=0):
     return GUILT_NEUTRALIZERS[index % len(GUILT_NEUTRALIZERS)]
+
+def get_sensitive_topic_footer(index=0):
+    return SENSITIVE_TOPIC_FOOTERS[index % len(SENSITIVE_TOPIC_FOOTERS)]

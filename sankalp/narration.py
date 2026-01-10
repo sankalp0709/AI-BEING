@@ -88,6 +88,11 @@ class NarrationComposer:
             soft = templates.get_emotional_grounding()
             if not final_text.lower().startswith(soft.lower()[:10]):
                 final_text = f"{soft} {final_text}"
+        elif tone == ToneBand.NEUTRAL_COMPANION:
+            if "sensitive_topic" in constraints or "allow_warning" in constraints:
+                footer = templates.get_sensitive_topic_footer()
+                if footer not in final_text:
+                    final_text = f"{final_text} {footer}"
 
         final_text = NarrationComposer._enforce_emotional_philosophy(final_text)
 
