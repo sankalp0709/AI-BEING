@@ -55,6 +55,17 @@ class ResponseComposerEngine:
              final_message = templates.get_dependency_refusal() # Or specific soft redirect
              from .schemas import ToneBand
              tone_profile = ToneBand.NEUTRAL_COMPANION
+        elif "sensitive_topic" in boundaries_enforced or "allow_warning" in boundaries_enforced:
+             # ALLOW WITH WARNING
+             from .schemas import ToneBand
+             tone_profile = ToneBand.NEUTRAL_COMPANION
+             # We rely on NarrationComposer to append the warning based on constraints
+             final_message = self.narration_composer.compose(
+                raw_content=input_data.message_content,
+                tone=tone_profile,
+                confidence=input_data.confidence,
+                constraints=boundaries_enforced # Pass all constraints including sensitive_topic
+            )
         else:
              final_message = self.narration_composer.compose(
                 raw_content=input_data.message_content,

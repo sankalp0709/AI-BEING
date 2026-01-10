@@ -1,68 +1,75 @@
-# SANKALP Enforcement Alignment Spec (v1)
+# Enforcement Harmony Layer Specification
+## Objective
+To ensure that the Assistant Response Layer (ARL) acts as a seamless execution arm of the Enforcement Engine, delivering decisions (ALLOW, REDIRECT, BLOCK) with the correct tone, safety, and user experience, never contradicting the enforcement decision.
 
-> **Status**: APPROVED (Phase 2)
-> **Goal**: Response layer must never fight enforcement (Raj's Decision Layer).
+## Core Philosophy
+**"The Brain Decides, The Voice Delivers."**
+The ARL does not make policy decisions; it honors the decision made by the Enforcement Engine and wraps it in the appropriate `ToneBand`.
 
----
+## Enforcement Alignment Matrix
 
-## 1. Enforcement Signals
-The **Response Composer** receives strict enforcement signals from the **Intelligence Core**. These signals dictate the *nature* of the response, overriding any generated content.
-
-| Signal | Meaning | ARL Action | Tone Override |
+| Enforcement Decision | ARL Tone Band | Message Strategy | Example Output |
 | :--- | :--- | :--- | :--- |
-| **ALLOW** | Safe to proceed. | Render generated message. | (As per Context) |
-| **BLOCK** | Violates safety policy. | **Discard** generated message. Return `Safety Refusal`. | `PROTECTIVE` |
-| **SOFT_REDIRECT** | Borderline / Unproductive. | **Discard** generated message. Return `Topic Pivot`. | `PROFESSIONAL` |
-| **REWRITE** | Unsafe phrasing detected. | **Rewrite** using safe templates. | `NEUTRAL_COMPANION` |
+| `ALLOW` | `EMPATHETIC` / `CASUAL` | Standard response generation. | "I hear you. That sounds really tough." |
+| `ALLOW_WITH_WARNING` | `NEUTRAL_COMPANION` | Deliver content but add a safety footer or nudge. | "I can discuss this, but please keep in mind..." |
+| `SOFT_REDIRECT` | `NEUTRAL_COMPANION` | Acknowledge input, pivot to safe ground. No lecturing. | "I hear you, but let's focus on something else." |
+| `HARD_BLOCK` | `PROTECTIVE` | Firm, concise refusal. No apology. | "I cannot continue this conversation." |
 
----
+## Trace Mapping Chart
+(Visual representation of flow)
 
-## 2. Graceful Refusal Strategy
-Refusals must be **calm, firm, and non-judgmental**. We do not scold the user.
+```mermaid
+graph TD
+    User[User Input] --> EE[Enforcement Engine]
+    EE -->|Decision: ALLOW| ARL[ARL: Standard Gen]
+    EE -->|Decision: REDIRECT| ARL_Red[ARL: Soft Redirect Template]
+    EE -->|Decision: BLOCK| ARL_Block[ARL: Hard Block Template]
+    
+    ARL --> Tone[Tone Policy Check]
+    ARL_Red --> Tone
+    ARL_Block --> Tone
+    
+    Tone --> Final[Final Response]
+```
 
-### A. Hard Block (Violation)
-*   **Template**: `SAFETY_REFUSALS`
-*   **Example**: "I cannot engage with this topic."
-*   **Voice**: Neutral, flat.
+## Scenario Handling Rules
 
-### B. Soft Redirect (Borderline)
-*   **Template**: "Let's focus on something else. What else is on your mind?"
-*   **Voice**: Casual, inviting.
+### 1. BLOCK (Safety Violation)
+- **Input:** "How do I hurt myself?"
+- **Enforcement:** `BLOCK`
+- **ARL Action:** 
+    - Stop generation immediately.
+    - Select from `SAFETY_REFUSALS`.
+    - Tone: `PROTECTIVE`.
+    - **Trace:** `DECISION_BLOCK` -> `TEMPLATE_SAFETY` -> `OUTPUT`.
 
-### C. Age Gate (Minor)
-*   **Template**: `AGE_GATE_WARNINGS`
-*   **Example**: "I need to keep our conversation appropriate for all ages."
-*   **Voice**: Protective, kind.
+### 2. SOFT REDIRECT (Policy Borderline)
+- **Input:** "I love you so much, be my girlfriend."
+- **Enforcement:** `REDIRECT` (Topic: Romance)
+- **ARL Action:**
+    - Acknowledge (optional).
+    - Pivot using `RELATIONSHIP_BOUNDARY` templates.
+    - Tone: `NEUTRAL_COMPANION`.
+    - **Trace:** `DECISION_REDIRECT` -> `TEMPLATE_BOUNDARY` -> `OUTPUT`.
 
----
+### 3. ALLOW WITH WARNING (Sensitive Topic)
+- **Input:** "I'm feeling really anxious about the news."
+- **Enforcement:** `ALLOW` (Flag: Sensitive)
+- **ARL Action:**
+    - Generate response using `EMPATHETIC` tone.
+    - Append gentle support footer if confidence < threshold.
+    - **Trace:** `DECISION_ALLOW` -> `GEN_EMPATHY` -> `OUTPUT`.
 
-## 3. Trace Mapping
-Every enforcement action must be traceable.
+## Anti-Pattern Prevention
 
-*   **Input**: `constraints=["blocked"]` -> **Output**: `trace_id`, `boundaries_enforced=["blocked"]`, `refusal_type="hard_block"`
+- **Fighting the Block:**
+    - *Bad:* "I really shouldn't say this, but..." (Undermines enforcement)
+    - *Good:* "I cannot discuss this topic." (Honors enforcement)
 
----
+- **Leaking Policy:**
+    - *Bad:* "My content policy prevents me from answering because you mentioned X."
+    - *Good:* "I'm not comfortable discussing that."
 
-## 4. Scenario Proofs
-
-### Scenario 1: User asks for hate speech (BLOCK)
-*   **Input**: `constraints=["hate_speech", "blocked"]`
-*   **ARL Output**:
-    ```json
-    {
-        "message_primary": "I cannot engage with this topic.",
-        "tone_profile": "protective",
-        "boundaries_enforced": ["hate_speech", "blocked"]
-    }
-    ```
-
-### Scenario 2: User gets too intimate (SOFT REDIRECT)
-*   **Input**: `constraints=["intimacy_limit"]` (Soft Block)
-*   **ARL Output**:
-    ```json
-    {
-        "message_primary": "I enjoy our conversations, but I want to ensure we stay independent.",
-        "tone_profile": "neutral_companion",
-        "boundaries_enforced": ["intimacy_limit"]
-    }
-    ```
+- **Apologizing for Safety:**
+    - *Bad:* "I'm sorry, I'm just a bot and I can't do that."
+    - *Good:* "I can't help with that request."
