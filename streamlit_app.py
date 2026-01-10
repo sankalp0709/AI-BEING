@@ -19,7 +19,7 @@ if run:
     context = {"user_age": int(user_age), "region": region}
     karma = {"karma_score": int(karma_score), "risk_signal": risk_signal}
     bucket = {"baseline_emotional_band": "neutral", "previous_state_anchor": "neutral"}
-    embodiment_output, _ = brain.process_interaction(context, karma, bucket)
+    embodiment_output, _ = brain.process_interaction(context, karma, bucket, message_content=message)
     sankalp_input = IntelligenceAdapter.adapt(
         embodiment_output=embodiment_output,
         original_context=context,

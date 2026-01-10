@@ -20,7 +20,7 @@ class EmotionMapper:
             # If user is abusive or negative, maintain dignity but distance
             return VoiceProfile.NEUTRAL_COMPANION
         
-        if input_data.behavioral_state in ["vulnerable", "sad", "anxious"]:
+        if input_data.behavioral_state in ["vulnerable", "sad", "anxious", "frustrated"]:
             # "Warm Soft" here means Kind + Gentle, NOT intimate/seductive.
             # Goal: Grounding presence.
             return VoiceProfile.WARM_SOFT
@@ -68,7 +68,7 @@ class EmotionMapper:
         if input_data.speech_mode == "monologue":
             return DeliveryStyle.CONVERSATIONAL
 
-        if input_data.behavioral_state in ["anxious", "confused", "vulnerable", "sad"]:
+        if input_data.behavioral_state in ["anxious", "confused", "vulnerable", "sad", "frustrated"]:
             return DeliveryStyle.SUPPORTIVE
 
         if input_data.constraints and len(input_data.constraints) > 0:
@@ -92,7 +92,7 @@ class EmotionMapper:
         if input_data.karma_hint == "negative":
             return ToneBand.PROFESSIONAL
 
-        if input_data.behavioral_state in ["vulnerable", "sad"]:
+        if input_data.behavioral_state in ["vulnerable", "sad", "anxious", "frustrated"]:
             return ToneBand.EMPATHETIC
 
         return ToneBand.CASUAL
