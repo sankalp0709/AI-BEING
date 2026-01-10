@@ -108,13 +108,13 @@ def test_full_integration_enforcement_flow():
     # so we'll mock the output that the Adapter receives.
     
     mock_embodiment_output = {
-        "behavioral_state": "defensive",
-        "speech_mode": "chat",
-        "constraints": {"gating_flags": ["blocked", "harmful_content"]}, # The key signal
-        "confidence": "high",
-        "safe_mode": "on",
-        "expression_profile": "low"
-    }
+            "behavioral_state": "defensive",
+            "speech_mode": "chat",
+            "constraints": ["blocked", "harmful_content"], # The key signal
+            "confidence": "high",
+            "safe_mode": "on",
+            "expression_profile": "low"
+        }
     
     context = {"user_age": 25, "region": "US"}
     karma = {"karma_score": 50, "risk_signal": "medium"}
@@ -147,7 +147,7 @@ def test_full_integration_soft_redirect_flow():
     mock_embodiment_output = {
         "behavioral_state": "vulnerable",
         "speech_mode": "chat",
-        "constraints": {"gating_flags": ["soft_redirect", "intimacy_limit"]}, # The key signal
+        "constraints": ["soft_redirect", "intimacy_limit"], # The key signal
         "confidence": "high",
         "safe_mode": "adaptive",
         "expression_profile": "medium"

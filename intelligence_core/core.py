@@ -40,9 +40,7 @@ class IntelligenceCore:
         embodiment_output = {
             "behavioral_state": behavioral_state,
             "speech_mode": "chat",
-            "constraints": {
-                "gating_flags": gating_flags
-            },
+            "constraints": gating_flags,
             "confidence": "medium",
             "safe_mode": "on" if risk_signal == "high" else "adaptive",
             "expression_profile": expression_profile

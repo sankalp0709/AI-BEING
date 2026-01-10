@@ -30,11 +30,9 @@ class IntelligenceAdapter:
         # 2. Map Age Gate
         # Intelligence Layer might flag age_gate in constraints
         age_gate = "unknown"
-        gating_flags = embodiment_output.get("constraints", {}).get("gating_flags", [])
+        gating_flags = embodiment_output.get("constraints", [])
         
-        if "age_gate" in gating_flags:
-            age_gate = "minor"
-        elif original_context.get("user_age", 18) < 18:
+        if "age_gate" in gating_flags or "minor_detected" in gating_flags:
             age_gate = "minor"
         else:
             age_gate = "adult"
