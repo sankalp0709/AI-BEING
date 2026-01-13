@@ -1,4 +1,5 @@
 import uuid
+import hashlib
 import json
 import logging
 from datetime import datetime, timezone
@@ -13,6 +14,8 @@ from . import templates
 logging.basicConfig(filename='sankalp_logs.jsonl', level=logging.INFO, format='%(message)s')
 
 class ResponseComposerEngine:
+    ENGINE_VERSION = "1.0.0"
+
     def __init__(self):
         self.emotion_mapper = EmotionMapper()
         self.narration_composer = NarrationComposer()
@@ -75,7 +78,10 @@ class ResponseComposerEngine:
             )
 
         # 3. Construct the Response Block
-        trace_id = str(uuid.uuid4())
+        # Deterministic Trace ID: hash(IntelligenceInput + version)
+        input_signature = json.dumps(input_data.to_dict(), sort_keys=True)
+        raw_trace = f"{input_signature}{self.ENGINE_VERSION}"
+        trace_id = hashlib.sha256(raw_trace.encode('utf-8')).hexdigest()
         
         # Determine allowed modes based on speech_mode
         # If speech_mode is "chat", we allow text and speech.
