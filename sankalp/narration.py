@@ -62,7 +62,8 @@ class NarrationComposer:
         raw_content: str,
         tone: ToneBand,
         confidence: float,
-        constraints: List[str]
+        constraints: List[str],
+        context_summary: str = ""
     ) -> str:
         final_text = raw_content.strip()
 
@@ -77,7 +78,11 @@ class NarrationComposer:
         if not final_text:
             return templates.get_safety_refusal()
 
-        if confidence < 0.5:
+        # Context-aware stability: Lower confidence threshold if we have context
+        # If we have context, we are less likely to need hedging for minor slips.
+        confidence_threshold = 0.3 if context_summary else 0.5
+
+        if confidence < confidence_threshold:
             hedge = templates.get_low_confidence_fallback()
             if not final_text.lower().startswith(hedge.lower()[:10]):
                 final_text = f"{hedge} {final_text}"

@@ -67,14 +67,16 @@ class ResponseComposerEngine:
                 raw_content=input_data.message_content,
                 tone=tone_profile,
                 confidence=input_data.confidence,
-                constraints=boundaries_enforced # Pass all constraints including sensitive_topic
+                constraints=boundaries_enforced, # Pass all constraints including sensitive_topic
+                context_summary=input_data.context_summary
             )
         else:
              final_message = self.narration_composer.compose(
                 raw_content=input_data.message_content,
                 tone=tone_profile,
                 confidence=input_data.confidence,
-                constraints=input_data.constraints
+                constraints=input_data.constraints,
+                context_summary=input_data.context_summary
             )
 
         # 3. Construct the Response Block
