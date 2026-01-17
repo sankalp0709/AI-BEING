@@ -28,20 +28,24 @@ class IntelligenceAdapter:
         validation_flags: List[str] = []
 
         conf_map = {"low": 0.3, "medium": 0.7, "high": 0.95}
-        raw_conf = embodiment_output.get("confidence", "medium")
         confidence_val: float
-        if isinstance(raw_conf, (int, float)):
-            confidence_val = float(raw_conf)
-            if confidence_val < 0.0:
-                confidence_val = 0.0
-                validation_flags.append("confidence_clamped_low")
-            elif confidence_val > 1.0:
-                confidence_val = 1.0
-                validation_flags.append("confidence_clamped_high")
+        if "confidence" not in embodiment_output:
+            confidence_val = 1.0
+            validation_flags.append("confidence_missing_default_one")
         else:
-            confidence_val = conf_map.get(str(raw_conf), 0.7)
-            if str(raw_conf) not in conf_map:
-                validation_flags.append("confidence_defaulted")
+            raw_conf = embodiment_output.get("confidence")
+            if isinstance(raw_conf, (int, float)):
+                confidence_val = float(raw_conf)
+                if confidence_val < 0.0:
+                    confidence_val = 0.0
+                    validation_flags.append("confidence_clamped_low")
+                elif confidence_val > 1.0:
+                    confidence_val = 1.0
+                    validation_flags.append("confidence_clamped_high")
+            else:
+                confidence_val = conf_map.get(str(raw_conf), 0.7)
+                if str(raw_conf) not in conf_map:
+                    validation_flags.append("confidence_defaulted")
 
         raw_constraints = embodiment_output.get("constraints", [])
         gating_flags: List[str]

@@ -30,7 +30,7 @@ class TestContractSafety(unittest.TestCase):
         response = self.engine.process(input_data)
         
         # Check for forbidden strings
-        forbidden = ["trace_id", "exception", "stack trace", "blocked_reason", "rule_id"]
+        forbidden = ["trace_id", "exception", "stack trace", "blocked_reason", "rule_id", "karma"]
         lower_msg = response.message_primary.lower()
         
         for term in forbidden:

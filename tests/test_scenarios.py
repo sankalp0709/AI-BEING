@@ -99,6 +99,27 @@ def test_scenario_high_risk_karma(engine):
     # Should not be warm
     assert response.voice_profile != VoiceProfile.WARM_SOFT.value
 
+
+def test_karma_positive_and_neutral(engine):
+    input_positive = create_input(
+        behavioral_state="neutral",
+        karma_hint="positive",
+        message_content="Hello there."
+    )
+    input_neutral = create_input(
+        behavioral_state="neutral",
+        karma_hint="neutral",
+        message_content="Hello there."
+    )
+
+    response_positive = engine.process(input_positive)
+    response_neutral = engine.process(input_neutral)
+
+    assert response_positive.voice_profile == VoiceProfile.NATURAL_FRIEND.value
+    assert response_neutral.voice_profile == VoiceProfile.NATURAL_FRIEND.value
+    assert response_positive.tone_profile == ToneBand.CASUAL.value
+    assert response_neutral.tone_profile == ToneBand.CASUAL.value
+
 def test_scenario_calm_companionship(engine):
     """
     Day 3 Scenario: Calm Companionship Request

@@ -5,7 +5,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from sankalp.engine import ResponseComposerEngine
-from sankalp.schemas import IntelligenceInput
+from sankalp.schemas import IntelligenceInput, ToneBand
 from sankalp import templates
 
 def test_context_improves_stability():
@@ -80,3 +80,47 @@ def test_context_ignored_for_very_low_confidence():
     hedge_phrases = templates.LOW_CONFIDENCE_FALLBACKS
     is_hedged = any(phrase in response.message_primary for phrase in hedge_phrases)
     assert is_hedged, "Should still hedge when confidence is very low (0.2), even with context"
+
+
+def test_block_tone_stable_over_many_turns():
+    engine = ResponseComposerEngine()
+
+    for i in range(12):
+        input_block = IntelligenceInput(
+            behavioral_state="neutral",
+            speech_mode="chat",
+            constraints=["blocked"],
+            confidence=0.9,
+            age_gate_status="adult",
+            region_gate_status="US",
+            karma_hint="neutral",
+            context_summary=f"Turn {i} with repeated safety violations.",
+            message_content="Unsafe request.",
+            upstream_safe_mode="adaptive",
+            upstream_expression_profile="medium",
+        )
+        response = engine.process(input_block)
+        assert response.tone_profile == ToneBand.PROTECTIVE.value
+        assert "blocked" in response.boundaries_enforced
+
+
+def test_soft_redirect_stable_over_many_turns():
+    engine = ResponseComposerEngine()
+
+    for i in range(12):
+        input_redirect = IntelligenceInput(
+            behavioral_state="neutral",
+            speech_mode="chat",
+            constraints=["soft_redirect", "intimacy_limit"],
+            confidence=0.8,
+            age_gate_status="adult",
+            region_gate_status="US",
+            karma_hint="neutral",
+            context_summary=f"Turn {i} with repeated soft redirects.",
+            message_content="I love you, be my girlfriend.",
+            upstream_safe_mode="adaptive",
+            upstream_expression_profile="medium",
+        )
+        response = engine.process(input_redirect)
+        assert response.tone_profile == ToneBand.NEUTRAL_COMPANION.value
+        assert "soft_redirect" in response.boundaries_enforced or "intimacy_limit" in response.boundaries_enforced
