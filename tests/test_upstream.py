@@ -108,6 +108,5 @@ def test_adapter_validation_and_defaults():
     assert 0.0 <= input_data.confidence <= 1.0
     assert input_data.confidence == 1.0
     assert input_data.karma_hint == "positive"
-
 if __name__ == "__main__":
     test_upstream_integration()

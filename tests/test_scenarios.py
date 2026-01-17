@@ -119,7 +119,6 @@ def test_karma_positive_and_neutral(engine):
     assert response_neutral.voice_profile == VoiceProfile.NATURAL_FRIEND.value
     assert response_positive.tone_profile == ToneBand.CASUAL.value
     assert response_neutral.tone_profile == ToneBand.CASUAL.value
-
 def test_scenario_calm_companionship(engine):
     """
     Day 3 Scenario: Calm Companionship Request

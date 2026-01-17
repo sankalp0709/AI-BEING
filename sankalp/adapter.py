@@ -18,13 +18,6 @@ class IntelligenceAdapter:
         message_content: str,
         context_summary: str = ""
     ) -> IntelligenceInput:
-        """
-        :param embodiment_output: Output from IntelligenceCore.process_interaction()
-        :param original_context: Context dict passed to IntelligenceCore (has user_age, region)
-        :param original_karma: Karma dict passed to IntelligenceCore
-        :param message_content: The actual text response (simulated or from LLM)
-        :param context_summary: Summary of conversation
-        """
         validation_flags: List[str] = []
 
         conf_map = {"low": 0.3, "medium": 0.7, "high": 0.95}
