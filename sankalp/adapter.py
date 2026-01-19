@@ -111,13 +111,20 @@ class IntelligenceAdapter:
         upstream_safe = embodiment_output.get("safe_mode", "adaptive")
         upstream_expr = embodiment_output.get("expression_profile", "medium")
 
+        raw_intent = embodiment_output.get("intent")
+        if raw_intent is None:
+            validation_flags.append("intent_missing")
+        elif not isinstance(raw_intent, str):
+            validation_flags.append("intent_invalid_type")
+
         trace_id = embodiment_output.get("trace_id")
         log_payload = {
             "component": "IntelligenceAdapter",
-            "adapter_version": "v1",
+            "adapter_version": "v1.0.0",
             "validation_flags": validation_flags,
             "has_context_summary": bool(context_summary),
             "has_trace_id": bool(trace_id),
+            "has_intent": raw_intent is not None,
         }
         logging.info(json.dumps(log_payload))
 
