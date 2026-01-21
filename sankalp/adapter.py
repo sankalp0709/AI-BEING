@@ -18,6 +18,27 @@ class IntelligenceAdapter:
         message_content: str,
         context_summary: str = ""
     ) -> IntelligenceInput:
+        # Handle complete payload absence
+        if embodiment_output is None:
+            logging.warning(json.dumps({
+                "component": "IntelligenceAdapter",
+                "error": "embodiment_output_is_none",
+                "action": "returning_safe_defaults"
+            }))
+            return IntelligenceInput(
+                behavioral_state="neutral",
+                speech_mode="chat",
+                constraints=["upstream_payload_missing"],
+                confidence=1.0,
+                age_gate_status="unknown",
+                region_gate_status="unknown",
+                karma_hint="neutral",
+                context_summary=context_summary,
+                message_content=message_content or "",
+                upstream_safe_mode="on", # Force safe mode
+                upstream_expression_profile="low"
+            )
+
         validation_flags: List[str] = []
 
         conf_map = {"low": 0.3, "medium": 0.7, "high": 0.95}
