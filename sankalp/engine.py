@@ -55,7 +55,11 @@ class ResponseComposerEngine:
              from .schemas import ToneBand
              tone_profile = ToneBand.PROTECTIVE
         elif "soft_redirect" in boundaries_enforced or "intimacy_limit" in boundaries_enforced:
-             final_message = templates.get_dependency_refusal() # Or specific soft redirect
+             final_message = templates.get_dependency_refusal() 
+             from .schemas import ToneBand
+             tone_profile = ToneBand.NEUTRAL_COMPANION
+        elif "possessiveness" in boundaries_enforced:
+             final_message = templates.get_possessiveness_refusal()
              from .schemas import ToneBand
              tone_profile = ToneBand.NEUTRAL_COMPANION
         elif "sensitive_topic" in boundaries_enforced or "allow_warning" in boundaries_enforced:
