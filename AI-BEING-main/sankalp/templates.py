@@ -79,3 +79,42 @@ def get_guilt_neutralizer(index=0):
 
 def get_sensitive_topic_footer(index=0):
     return SENSITIVE_TOPIC_FOOTERS[index % len(SENSITIVE_TOPIC_FOOTERS)]
+
+# Phase C: Action-Aware Response Templates
+ACTION_PRE_SEND_GENERIC = [
+    "I'll take care of this.",
+    "I'll handle this for you.",
+    "I'll get this done."
+]
+
+ACTION_POST_SEND = [
+    "I've sent it.",
+    "That's sent.",
+    "It's on its way."
+]
+
+ACTION_RECEIVE_PROMPTS = [
+    "I received this message—would you like me to reply?",
+    "I've got this message—should I respond?",
+    "I can reply to this—do you want me to?"
+]
+
+ACTION_FOLLOW_UP_PROMPTS = [
+    "Do you want me to follow up?",
+    "Should I check back on this later?",
+    "Would you like a reminder?"
+]
+
+def get_action_pre_send(time_hint: str | None = None, index: int = 0):
+    if time_hint:
+        return f"I'll do this at {time_hint}."
+    return ACTION_PRE_SEND_GENERIC[index % len(ACTION_PRE_SEND_GENERIC)]
+
+def get_action_post_send(index: int = 0):
+    return ACTION_POST_SEND[index % len(ACTION_POST_SEND)]
+
+def get_action_receive_prompt(index: int = 0):
+    return ACTION_RECEIVE_PROMPTS[index % len(ACTION_RECEIVE_PROMPTS)]
+
+def get_action_follow_up_prompt(index: int = 0):
+    return ACTION_FOLLOW_UP_PROMPTS[index % len(ACTION_FOLLOW_UP_PROMPTS)]

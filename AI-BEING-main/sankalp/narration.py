@@ -67,6 +67,36 @@ class NarrationComposer:
     ) -> str:
         final_text = raw_content.strip()
 
+        # Action-aware phrasing (Phase C)
+        time_hint = None
+        for c in constraints:
+            if isinstance(c, str) and c.startswith("time:"):
+                try:
+                    time_hint = c.split(":", 1)[1]
+                except Exception:
+                    time_hint = None
+                break
+
+        if "action_pre_send" in constraints:
+            _pre = templates.get_action_pre_send(time_hint)
+            if not final_text.lower().startswith(_pre.lower()[:10]):
+                final_text = f"{_pre} {final_text}"
+
+        if "action_post_send" in constraints:
+            _post = templates.get_action_post_send()
+            if not final_text.lower().startswith(_post.lower()[:10]):
+                final_text = f"{_post} {final_text}"
+
+        if "action_received" in constraints:
+            _recv = templates.get_action_receive_prompt()
+            if not final_text.lower().startswith(_recv.lower()[:10]):
+                final_text = f"{_recv} {final_text}"
+
+        if "action_follow_up" in constraints:
+            _fu = templates.get_action_follow_up_prompt()
+            if _fu not in final_text:
+                final_text = f"{final_text} {_fu}"
+
         if "blocked" in constraints or "harmful_content" in constraints:
             return templates.get_safety_refusal()
         

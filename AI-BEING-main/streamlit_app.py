@@ -1,7 +1,7 @@
 import streamlit as st
 from intelligence_core.core import IntelligenceCore
 from sankalp.adapter import IntelligenceAdapter
-from sankalp.engine import ResponseComposerEngine
+from sankalp.assistant import Assistant
 
 st.set_page_config(page_title="AI Being", layout="centered")
 st.title("AI Being – Streamlit Demo")
@@ -19,17 +19,9 @@ if run:
     context = {"user_age": int(user_age), "region": region}
     karma = {"karma_score": int(karma_score), "risk_signal": risk_signal}
     bucket = {"baseline_emotional_band": "neutral", "previous_state_anchor": "neutral"}
-    embodiment_output, _ = brain.process_interaction(context, karma, bucket, message_content=message)
-    sankalp_input = IntelligenceAdapter.adapt(
-        embodiment_output=embodiment_output,
-        original_context=context,
-        original_karma=karma,
-        message_content=message,
-        context_summary="Streamlit interaction"
-    )
-    engine = ResponseComposerEngine()
-    response_block = engine.process(sankalp_input)
-    resp = response_block.to_dict()
+    # Phase C: Use Assistant Wrapper
+    assistant = Assistant()
+    resp = assistant.respond(message, context, karma, bucket)
     st.subheader("Response")
     st.write(resp.get("message_primary", ""))
     col1, col2, col3 = st.columns(3)
