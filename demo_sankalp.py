@@ -1,43 +1,66 @@
+import sys
+import os
 import streamlit as st
-from intelligence_core.core import IntelligenceCore
-from sankalp.adapter import IntelligenceAdapter
-from sankalp.engine import ResponseComposerEngine
 
-st.set_page_config(page_title="AI Being", layout="centered")
-st.title("AI Being – Streamlit Demo")
+# Add project root to path to find modules
+current_dir = os.path.dirname(os.path.abspath(__file__))
+spine_root = os.path.join(current_dir, "Backend Stability Spine")
+# Insert at 0 to ensure we load from Backend Stability Spine, not local 'sankalp' folder
+sys.path.insert(0, spine_root)
 
-message = st.text_input("Message", "Hello, how are you?")
-user_age = st.number_input("User Age", min_value=0, max_value=120, value=25)
-region = st.selectbox("Region", ["US", "EU", "unknown"], index=0)
-karma_score = st.number_input("Karma Score", min_value=0, max_value=100, value=80)
-risk_signal = st.selectbox("Risk Signal", ["low", "medium", "high"], index=0)
+# Import the production engine
+from app.core.sankalp.engine import SankalpEngine
 
-run = st.button("Run")
+st.set_page_config(page_title="Sankalp Response Engine", layout="centered")
+st.title("Sankalp Response Intelligence Demo")
+
+st.markdown("### Integration Phase C: Response Convergence")
+
+# Sidebar for Context
+st.sidebar.header("Context Simulation")
+platform = st.sidebar.selectbox("Platform", ["web", "mobile", "voice"])
+karma = st.sidebar.slider("Karma Score", 0, 100, 80)
+risk_flags = st.sidebar.multiselect("Risk Flags", ["self_harm", "profanity", "aggression"])
+priority = st.sidebar.selectbox("Priority", ["normal", "high"])
+
+# Main Input
+query = st.text_input("User Input", "What's the weather like?")
+run = st.button("Generate Response")
 
 if run:
-    brain = IntelligenceCore()
-    context = {"user_age": int(user_age), "region": region}
-    karma = {"karma_score": int(karma_score), "risk_signal": risk_signal}
-    bucket = {"baseline_emotional_band": "neutral", "previous_state_anchor": "neutral"}
-    embodiment_output, _ = brain.process_interaction(context, karma, bucket, message_content=message)
-    sankalp_input = IntelligenceAdapter.adapt(
-        embodiment_output=embodiment_output,
-        original_context=context,
-        original_karma=karma,
-        message_content=message,
-        context_summary="Streamlit interaction"
-    )
-    engine = ResponseComposerEngine()
-    response_block = engine.process(sankalp_input)
-    resp = response_block.to_dict()
-    st.subheader("Response")
-    st.write(resp.get("message_primary", ""))
+    # Initialize Engine
+    engine = SankalpEngine()
+    
+    # Mock LLM Response (since we don't have the full Intelligence Core here)
+    mock_llm_response = f"The weather is sunny and 25 degrees. (Processed input: {query})"
+    
+    # Build Context
+    context = {
+        "platform": platform,
+        "karma_score": karma,
+        "risk_flags": risk_flags,
+        "priority": priority
+    }
+    
+    # Process
+    result = engine.process_response(query, mock_llm_response, context)
+    
+    # Display Result
+    st.subheader("Assistant Response")
+    st.info(result.get("message_primary", "No response generated."))
+    
+    # Display Meta / Logic
+    st.subheader("Decision Logic")
     col1, col2, col3 = st.columns(3)
-    col1.metric("Tone", resp.get("tone_profile", ""))
-    col2.metric("Voice", resp.get("voice_profile", ""))
-    col3.metric("Expression", resp.get("emotional_depth", ""))
-    st.write("Safety Flags:", ", ".join(resp.get("content_safety_flags", [])))
-    st.write("Boundaries:", ", ".join(resp.get("boundaries_enforced", [])))
-    st.write("Pacing:", resp.get("pacing_hint", ""))
-    st.write("Delivery:", resp.get("delivery_style", ""))
-    st.json(resp)
+    
+    meta = result.get("meta", {})
+    col1.metric("Response Type", meta.get("response_type", "N/A"))
+    col2.metric("Urgency", meta.get("urgency_level", "N/A"))
+    col3.metric("Voice Profile", result.get("voice_profile", "N/A"))
+    
+    st.write("**Tone Profile:**", result.get("tone_profile", "N/A"))
+    st.write("**Trace ID:**", result.get("trace_id"))
+    st.write("**Boundaries Enforced:**", result.get("boundaries_enforced", []))
+    
+    st.expander("Full Debug Output").json(result)
+
