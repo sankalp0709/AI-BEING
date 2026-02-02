@@ -7,15 +7,15 @@
 ## 📦 Contents
 
 ### 1. Contracts (`/contracts`)
-- `enforcement_contract_v2.md`: The core rules of engagement.
-- `enforcement_translation_map.md`: Mandatory mapping of technical decisions to human language.
+- `enforcement_contract.md`: The core rules of engagement.
+- `enforcement_contract_v2.md`: Updated mappings for v1.0 release.
 - `failure_resilience_matrix.json`: Definition of fail-closed behaviors.
 - `trust_alignment_v2.md`: Trust and safety guarantees.
 
 ### 2. Proofs (`/proofs`)
 - `e2e_run_logs_day6.txt`: End-to-End integration test logs demonstrating normal, block, rewrite, and warning flows.
-- `chaos_failure_report.txt`: Chaos and failure handling test results (22 passed tests).
-- `decision_translation_proofs.md`: 10 concrete examples of Decision -> Human Language translation.
+- `chaos_pass_report.txt` (if available): Fuzz testing results.
+- `trace_map.json` (if available): Decision trace examples.
 
 ### 3. Demo Kit (`/demo_kit`)
 To run the demo, execute the E2E integration tests:

@@ -21,9 +21,13 @@ from ..tools.web_browser_tool import WebBrowserTool
 from ..tools.calculator_tool import CalculatorTool
 from ..tools.file_tool import FileTool
 from ..tools.automation_tool import AutomationTool
+from ..core.sankalp.engine import SankalpEngine
 
 router = APIRouter()
 logger = get_logger(__name__)
+# Initialize Sankalp Engine
+sankalp_engine = SankalpEngine()
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 PARENT_DIR = os.path.dirname(BASE_DIR)
 if PARENT_DIR not in sys.path:
@@ -65,24 +69,21 @@ async def generate_response(request: RespondRequest):
             return await bhiv.process(request)
         prompt = f"Context: {request.context}\nQuery: {request.query}\nProvide a helpful response."
         response = await llm_bridge.call_llm(request.model, prompt)
-        arl_decision, rewrite_class = arl_gate(request.query, str(request.context.get("platform", "web")))
+        
+        # Sankalp Engine Integration
+        result = sankalp_engine.process_response(request.query, response, request.context)
+        
         logger.info(
-            "ARL gate applied",
+            "Sankalp processed response",
             extra={"extra_fields": {
-                "arl_decision": arl_decision,
-                "rewrite_class": rewrite_class,
+                "decision": result.get("decision"),
+                "trace_id": result.get("trace_id"),
                 "endpoint": "/api/respond"
             }}
         )
-        if arl_decision == "BLOCK":
-            note = message_for(arl_decision, rewrite_class, request.context)
-            return {"response": note}
-        if arl_decision == "REWRITE" and rewrite_class:
-            response = sanitize_text(response, rewrite_class)
-        note = message_for(arl_decision, rewrite_class, request.context)
-        if note:
-            response = f"{note} {response}"
-        return {"response": response}
+        
+        return {"response": result["response"], "trace_id": result["trace_id"]}
+
     except Exception as e:
         return {"error": f"Failed to generate response: {str(e)}"}
 
